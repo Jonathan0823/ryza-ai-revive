@@ -19,7 +19,7 @@ $BT = Join-Path $Sdk "build-tools/34.0.0"
 $AJ = Join-Path $Sdk "platforms/android-34/android.jar"
 
 foreach ($p in @((Join-Path $Jdk "bin/javac.exe"), (Join-Path $BT "aapt2.exe"), $AJ)) {
-  if (-not (Test-Path $p)) { throw "missing $p — run scripts/setup_android_tools.ps1 first" }
+  if (-not (Test-Path $p)) { throw "missing $p - run scripts/setup_android_tools.ps1 first" }
 }
 
 $env:JAVA_HOME = $Jdk
