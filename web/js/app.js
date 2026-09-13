@@ -138,6 +138,7 @@
 
       Promise.all([Config.hydrate(), World.init(), VoiceBank.load(), Sound.init()]).then(function () {
         Sound.setCatalog(Object.keys(World.scenes || {}));
+        if (window.Nsfw) Nsfw.restore();
         var st = Config.section('state');
         Sound.setPlace(st.stage, st.tod, World.backgroundFor(st.stage));
         App._tickDay();
@@ -464,7 +465,9 @@
       };
       document.getElementById('btn-settings-reset').onclick = function () {
         if (confirm('恢复所有设置为默认值？')) {
-          Config.reset(); App.buildSettings(); App.buildCharaForm();
+          Config.reset();
+          if (window.Nsfw) Nsfw.restore();
+          App.buildSettings(); App.buildCharaForm();
           App.toast(I18n.t('toast.saved'));
         }
       };
@@ -2243,6 +2246,8 @@
         function (v) { Config.set('app.vibration', v); });
       App._switch(w, T('settings.rim'), Config.section('app').rim !== false,
         function (v) { Config.set('app.rim', v); });
+      App._switch(w, T('settings.nsfw'), Nsfw.enabled(),
+        function (v) { Nsfw.setEnabled(v); });
 
       /* ---------------- time passage (official drove it from AppServerClock) */
       App._title(w, T('settings.time'));
@@ -2319,8 +2324,12 @@
       bImp.onclick = function () {
         var txt = prompt('粘贴配置 JSON');
         if (!txt) return;
-        try { Config.importJSON(txt); App.buildSettings(); App.buildCharaForm();
-              App.toast(I18n.t('toast.saved')); }
+        try {
+          Config.importJSON(txt);
+          if (window.Nsfw) Nsfw.restore();
+          App.buildSettings(); App.buildCharaForm();
+          App.toast(I18n.t('toast.saved'));
+        }
         catch (e) { App.toast('配置解析失败：' + e.message, true); }
       };
       row2.appendChild(bExp); row2.appendChild(bImp);

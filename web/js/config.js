@@ -116,6 +116,7 @@
       vibration: true,
       fullscreen: false,
       rim: true,
+      nsfwEnabled: false,            // explicit user permission; AI cannot enable it when off
       showBubble: true,              // talk bubbles over the stage (auto-fade)
       timeMode: 'real',              // real=墙钟(LLM不可拨) | flow=游戏钟(LLM可拨) | manual=🌤
       flowSpeed: 60,                 // flow: in-game minutes per real minute (60 ⇒ 1 game hr / real min)

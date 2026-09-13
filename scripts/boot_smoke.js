@@ -199,9 +199,15 @@ for (const f of ['util.js', 'config.js', 'i18n.js', 'api.js', 'memory.js',
     sandbox.Nsfw.onTurn({ nsfw: null });
     ok(!sandbox.Nsfw.active(), 'omitted tag does not strip');
     sandbox.Nsfw.onTurn(nsfwTag);
-    ok(sandbox.Nsfw.active(), 'llm nsfw:on strips');
+    ok(!sandbox.Nsfw.active(), 'disabled setting blocks llm nsfw:on');
+    sandbox.Nsfw.setEnabled(true);
+    ok(sandbox.Nsfw.active(), 'settings toggle enables nsfw');
     ok(/肌が見えている/.test(sandbox.Nsfw.screenFact()),
        'prompt tells the LLM she is undressed');
+    sandbox.Nsfw.setEnabled(false);
+    ok(!sandbox.Nsfw.active(), 'settings toggle dresses and blocks nsfw');
+    sandbox.Nsfw.onTurn(nsfwTag);
+    ok(!sandbox.Nsfw.active(), 'disabled setting continues blocking llm nsfw:on');
     sandbox.Nsfw.reset();
     ok(!sandbox.Nsfw.active(), 'reset clears nsfw');
 

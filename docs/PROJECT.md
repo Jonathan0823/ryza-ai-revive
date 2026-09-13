@@ -78,6 +78,8 @@ powershell -File scripts/build_apk.ps1
 
 **Android.** `android.app.Activity` and `AssetServer` (static files plus `/_proxy`). Requests under `config/` return 404. The maintained APK path is `scripts/build_apk.ps1`.
 
+**NSFW gate.** `web/js/nsfw.js` swaps a costume's `nsfw` atlas texture when the AI emits `undress:on`, but only after the user enables `app.nsfwEnabled` in Settings. `undress:off` always restores the normal texture; the permission defaults to false.
+
 **Packaging gate.** `privacy_check.py` inspects staged desktop output and APK zip members. A match aborts the build.
 
 ---

@@ -17,7 +17,12 @@ const sandbox = {
 sandbox.window = sandbox;
 sandbox.globalThis = sandbox;
 sandbox.Avatar = { _calls: [], setAtlasVariant(name) { this._calls.push(name); } };
-sandbox.Config = { section() { return {}; }, set() {}, get() { return {}; } };
+const configApp = { nsfwEnabled: false };
+sandbox.Config = {
+  section(name) { return name === 'app' ? configApp : {}; },
+  set(path, value) { if (path === 'app.nsfwEnabled') configApp.nsfwEnabled = value; },
+  get() { return { app: configApp }; }
+};
 sandbox.document = { getElementById() { return null; } };
 sandbox.XMLHttpRequest = function () {};
 sandbox.location = { origin: 'http://127.0.0.1:8765' };
@@ -40,14 +45,21 @@ ok(/着ている/.test(N.screenFact()), 'screenFact: dressed');
 N.onTurn({ nsfw: null });
 ok(N.active() === false, 'omitted tag does not strip');
 N.onTurn({ nsfw: true });
-ok(N.active() === true && sandbox.Avatar._calls.pop() === 'nsfw', 'tag nsfw:on');
+ok(N.active() === false && sandbox.Avatar._calls.pop() === 'default', 'disabled blocks tag nsfw:on');
+N.setEnabled(true);
+ok(N.enabled() === true && N.active() === true, 'settings toggle enables nsfw');
 ok(/肌が見えている/.test(N.screenFact()), 'screenFact: undressed');
 N.onTurn({ nsfw: null });
 ok(N.active() === true, 'omitted tag keeps undressed');
 N.onTurn({ nsfw: false });
 ok(N.active() === false && sandbox.Avatar._calls.pop() === 'default', 'tag nsfw:off');
 N.onTurn({ nsfw: true });
-ok(N.active() === true, 'llm can initiate');
+ok(N.active() === true, 'enabled llm can initiate');
+N.setEnabled(false);
+ok(N.enabled() === false && N.active() === false, 'settings toggle disables and dresses');
+N.onTurn({ nsfw: true });
+ok(N.active() === false, 'disabled blocks llm re-enable');
+N.setEnabled(true);
 N.reset();
 ok(N.active() === false && sandbox.Avatar._calls.pop() === 'default', 'reset → default');
 
